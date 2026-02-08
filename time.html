@@ -50,6 +50,59 @@
       font-size: 16px;
       opacity: 0.85;
     }
+    .calendar {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(140px, 1fr));
+      gap: 14px;
+    }
+    .month {
+      border: 1px solid #3a2a22;
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.6);
+    }
+    .month h2 {
+      margin: 0 0 8px 0;
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #3a2a22;
+    }
+    .weekday-row,
+    .days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      text-align: center;
+      font-size: 11px;
+    }
+    .weekday-row {
+      font-weight: 600;
+      opacity: 0.7;
+      margin-bottom: 4px;
+    }
+    .day {
+      padding: 2px 0;
+      border-radius: 6px;
+    }
+    .today {
+      background: #b73a2d;
+      color: white;
+    }
+    .empty {
+      opacity: 0;
+    }
+    @media (max-width: 880px) {
+      .calendar {
+        grid-template-columns: repeat(2, minmax(140px, 1fr));
+      }
+    }
+    @media (max-width: 600px) {
+      .calendar {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -57,11 +110,19 @@
     <h1>현재 시간</h1>
     <div id="time" class="time">--:--:--</div>
     <div id="date" class="date"></div>
+    <div id="calendar" class="calendar" aria-label="올해 달력"></div>
   </div>
 
   <script>
     const timeEl = document.getElementById("time");
     const dateEl = document.getElementById("date");
+    const calendarEl = document.getElementById("calendar");
+
+    const monthLabels = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+    const weekdays = ["일", "월", "화", "수", "목", "금", "토"];
 
     function updateClock() {
       const now = new Date();
@@ -80,7 +141,64 @@
       dateEl.textContent = date;
     }
 
+    function buildCalendar(year) {
+      calendarEl.innerHTML = "";
+
+      for (let month = 0; month < 12; month += 1) {
+        const monthBox = document.createElement("div");
+        monthBox.className = "month";
+
+        const title = document.createElement("h2");
+        title.textContent = `${year} ${monthLabels[month]}`;
+        monthBox.appendChild(title);
+
+        const weekdayRow = document.createElement("div");
+        weekdayRow.className = "weekday-row";
+        weekdays.forEach((label) => {
+          const cell = document.createElement("div");
+          cell.textContent = label;
+          weekdayRow.appendChild(cell);
+        });
+        monthBox.appendChild(weekdayRow);
+
+        const daysGrid = document.createElement("div");
+        daysGrid.className = "days";
+
+        const firstDay = new Date(year, month, 1);
+        const startOffset = firstDay.getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        for (let i = 0; i < startOffset; i += 1) {
+          const empty = document.createElement("div");
+          empty.className = "day empty";
+          empty.textContent = "0";
+          daysGrid.appendChild(empty);
+        }
+
+        for (let day = 1; day <= daysInMonth; day += 1) {
+          const cell = document.createElement("div");
+          cell.className = "day";
+          cell.textContent = String(day);
+
+          const now = new Date();
+          if (
+            now.getFullYear() === year &&
+            now.getMonth() === month &&
+            now.getDate() === day
+          ) {
+            cell.classList.add("today");
+          }
+
+          daysGrid.appendChild(cell);
+        }
+
+        monthBox.appendChild(daysGrid);
+        calendarEl.appendChild(monthBox);
+      }
+    }
+
     updateClock();
+    buildCalendar(new Date().getFullYear());
     setInterval(updateClock, 1000);
   </script>
 </body>
