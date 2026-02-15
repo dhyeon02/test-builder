@@ -3,280 +3,279 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>현재 시간</title>
+  <title>계산기</title>
   <style>
     :root {
-      color-scheme: light;
-      --bg: #f6f1ea;
-      --ink: #2a1f1a;
-      --accent: #b73a2d;
-      --card: rgba(255, 255, 255, 0.78);
-      --border: #3a2a22;
-      --shadow: 0 18px 35px rgba(0,0,0,0.12);
+      --bg-1: #fff4e6;
+      --bg-2: #ffd9b8;
+      --panel: rgba(255, 255, 255, 0.85);
+      --text: #1f1a16;
+      --accent: #ff6b35;
+      --accent-2: #ff8c42;
+      --line: #2f2620;
+      --shadow: 0 14px 28px rgba(0, 0, 0, 0.18);
     }
-    :root[data-theme="dark"] {
-      color-scheme: dark;
-      --bg: #131314;
-      --ink: #f3ede6;
-      --accent: #ff8a6f;
-      --card: rgba(25, 25, 28, 0.82);
-      --border: #5b4a41;
-      --shadow: 0 18px 35px rgba(0,0,0,0.4);
+
+    * {
+      box-sizing: border-box;
     }
-    html, body {
+
+    html,
+    body {
       height: 100%;
       margin: 0;
     }
+
     body {
       font-family: "IBM Plex Sans", "Noto Sans KR", sans-serif;
-      background: radial-gradient(circle at 20% 20%, rgba(255, 233, 210, 0.9), transparent 55%),
-                  radial-gradient(circle at 80% 10%, rgba(247, 199, 163, 0.9), transparent 60%),
-                  var(--bg);
-      color: var(--ink);
+      color: var(--text);
       display: grid;
       place-items: center;
+      background:
+        radial-gradient(circle at 15% 15%, #ffe9cc 0, transparent 46%),
+        radial-gradient(circle at 85% 8%, #ffc99a 0, transparent 52%),
+        linear-gradient(145deg, var(--bg-1), var(--bg-2));
+      padding: 20px;
     }
-    :root[data-theme="dark"] body {
-      background: radial-gradient(circle at 20% 20%, rgba(72, 52, 48, 0.8), transparent 55%),
-                  radial-gradient(circle at 80% 10%, rgba(55, 44, 58, 0.8), transparent 60%),
-                  var(--bg);
-    }
-    .card {
-      background: var(--card);
-      backdrop-filter: blur(6px);
-      border: 2px solid var(--border);
-      border-radius: 20px;
-      padding: 32px 36px;
-      min-width: 280px;
+
+    .calculator {
+      width: min(360px, 100%);
+      border: 2px solid var(--line);
+      border-radius: 22px;
+      background: var(--panel);
+      backdrop-filter: blur(5px);
       box-shadow: var(--shadow);
+      padding: 18px;
     }
-    h1 {
-      font-size: 18px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin: 0 0 12px 0;
-    }
-    .time {
-      font-family: "Space Grotesk", "IBM Plex Sans", sans-serif;
-      font-size: 48px;
-      font-weight: 600;
-      color: var(--accent);
-    }
-    .toggle-row {
-      display: flex;
-      justify-content: flex-end;
-      margin-bottom: 8px;
-    }
-    .theme-toggle {
-      border: 1px solid var(--border);
-      background: transparent;
-      color: inherit;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      letter-spacing: 0.04em;
-      cursor: pointer;
-    }
-    .theme-toggle:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
-    }
-    .date {
-      margin-top: 8px;
-      font-size: 16px;
-      opacity: 0.85;
-    }
-    .calendar {
-      margin-top: 18px;
-      display: grid;
-      grid-template-columns: repeat(3, minmax(140px, 1fr));
-      gap: 14px;
-    }
-    .month {
-      border: 1px solid var(--border);
-      border-radius: 12px;
+
+    .display-wrap {
+      border: 2px solid var(--line);
+      border-radius: 14px;
       padding: 10px 12px;
-      background: rgba(255, 255, 255, 0.6);
+      background: #fff;
+      margin-bottom: 14px;
     }
-    :root[data-theme="dark"] .month {
-      background: rgba(34, 34, 38, 0.6);
-    }
-    .month h2 {
-      margin: 0 0 8px 0;
+
+    .history {
+      min-height: 20px;
+      text-align: right;
       font-size: 13px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: #3a2a22;
+      opacity: 0.65;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    .weekday-row,
-    .days {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 4px;
-      text-align: center;
-      font-size: 11px;
-    }
-    .weekday-row {
+
+    .display {
+      width: 100%;
+      border: 0;
+      text-align: right;
+      font-size: clamp(30px, 6vw, 38px);
       font-weight: 600;
+      font-family: "Space Grotesk", "IBM Plex Sans", sans-serif;
+      color: var(--text);
+      outline: none;
+      background: transparent;
+    }
+
+    .keys {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    button {
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--text);
+      padding: 14px 0;
+      font-size: 19px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 120ms ease, filter 120ms ease;
+    }
+
+    button:hover {
+      filter: brightness(0.97);
+    }
+
+    button:active {
+      transform: translateY(1px) scale(0.99);
+    }
+
+    .op {
+      background: #fff0e7;
+    }
+
+    .equal {
+      background: linear-gradient(160deg, var(--accent), var(--accent-2));
+      color: #fff;
+    }
+
+    .span-2 {
+      grid-column: span 2;
+    }
+
+    .hint {
+      margin-top: 10px;
+      font-size: 12px;
       opacity: 0.7;
-      margin-bottom: 4px;
-    }
-    .day {
-      padding: 2px 0;
-      border-radius: 6px;
-    }
-    .today {
-      background: #b73a2d;
-      color: white;
-    }
-    :root[data-theme="dark"] .today {
-      background: #ff8a6f;
-      color: #1c1b1a;
-    }
-    .empty {
-      opacity: 0;
-    }
-    @media (max-width: 880px) {
-      .calendar {
-        grid-template-columns: repeat(2, minmax(140px, 1fr));
-      }
-    }
-    @media (max-width: 600px) {
-      .calendar {
-        grid-template-columns: 1fr;
-      }
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="toggle-row">
-      <button id="themeToggle" class="theme-toggle" type="button">Dark</button>
+  <main class="calculator" aria-label="기본 계산기">
+    <div class="display-wrap">
+      <div id="history" class="history" aria-live="polite"></div>
+      <input id="display" class="display" type="text" value="0" readonly aria-label="계산 결과" />
     </div>
-    <h1>현재 시간</h1>
-    <div id="time" class="time">--:--:--</div>
-    <div id="date" class="date"></div>
-    <div id="calendar" class="calendar" aria-label="올해 달력"></div>
-  </div>
+
+    <div class="keys">
+      <button type="button" data-action="clear" class="op">AC</button>
+      <button type="button" data-action="delete" class="op">DEL</button>
+      <button type="button" data-value="%" class="op">%</button>
+      <button type="button" data-value="/" class="op">÷</button>
+
+      <button type="button" data-value="7">7</button>
+      <button type="button" data-value="8">8</button>
+      <button type="button" data-value="9">9</button>
+      <button type="button" data-value="*" class="op">×</button>
+
+      <button type="button" data-value="4">4</button>
+      <button type="button" data-value="5">5</button>
+      <button type="button" data-value="6">6</button>
+      <button type="button" data-value="-" class="op">−</button>
+
+      <button type="button" data-value="1">1</button>
+      <button type="button" data-value="2">2</button>
+      <button type="button" data-value="3">3</button>
+      <button type="button" data-value="+" class="op">+</button>
+
+      <button type="button" data-value="0" class="span-2">0</button>
+      <button type="button" data-value=".">.</button>
+      <button type="button" data-action="equals" class="equal">=</button>
+    </div>
+
+    <p class="hint">키보드 입력 지원: 숫자, 연산자, Enter, Backspace, Esc</p>
+  </main>
 
   <script>
-    const timeEl = document.getElementById("time");
-    const dateEl = document.getElementById("date");
-    const calendarEl = document.getElementById("calendar");
-    const themeToggle = document.getElementById("themeToggle");
+    const display = document.getElementById("display");
+    const historyEl = document.getElementById("history");
+    const keys = document.querySelector(".keys");
 
-    const monthLabels = [
-      "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"
-    ];
-    const weekdays = ["일", "월", "화", "수", "목", "금", "토"];
-    const storageKey = "timePageTheme";
+    let current = "0";
+    let expression = "";
+    let shouldReset = false;
 
-    function applyTheme(theme) {
-      const root = document.documentElement;
-      if (theme === "dark") {
-        root.setAttribute("data-theme", "dark");
-        themeToggle.textContent = "Light";
+    function updateDisplay() {
+      display.value = current;
+      historyEl.textContent = expression;
+    }
+
+    function isOperator(char) {
+      return ["+", "-", "*", "/", "%"].includes(char);
+    }
+
+    function appendNumber(num) {
+      if (shouldReset) {
+        current = "0";
+        shouldReset = false;
+      }
+      current = current === "0" ? num : current + num;
+      updateDisplay();
+    }
+
+    function appendDot() {
+      if (shouldReset) {
+        current = "0";
+        shouldReset = false;
+      }
+      if (!current.includes(".")) {
+        current += ".";
+      }
+      updateDisplay();
+    }
+
+    function setOperator(op) {
+      if (isOperator(expression.slice(-1))) {
+        expression = expression.slice(0, -1) + op;
       } else {
-        root.removeAttribute("data-theme");
-        themeToggle.textContent = "Dark";
+        expression += current + op;
       }
+      shouldReset = true;
+      updateDisplay();
     }
 
-    function initTheme() {
-      const saved = localStorage.getItem(storageKey);
-      if (saved === "dark" || saved === "light") {
-        applyTheme(saved);
-        return;
-      }
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      applyTheme(prefersDark ? "dark" : "light");
+    function clearAll() {
+      current = "0";
+      expression = "";
+      shouldReset = false;
+      updateDisplay();
     }
 
-    function updateClock() {
-      const now = new Date();
-      const time = now.toLocaleTimeString("ko-KR", {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
-      });
-      const date = now.toLocaleDateString("ko-KR", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        weekday: "long"
-      });
-      timeEl.textContent = time;
-      dateEl.textContent = date;
+    function deleteOne() {
+      if (shouldReset) return;
+      current = current.length > 1 ? current.slice(0, -1) : "0";
+      updateDisplay();
     }
 
-    function buildCalendar(year) {
-      calendarEl.innerHTML = "";
+    function calculate() {
+      const fullExpression = expression + current;
+      if (!fullExpression || isOperator(fullExpression.slice(-1))) return;
 
-      for (let month = 0; month < 12; month += 1) {
-        const monthBox = document.createElement("div");
-        monthBox.className = "month";
-
-        const title = document.createElement("h2");
-        title.textContent = `${year} ${monthLabels[month]}`;
-        monthBox.appendChild(title);
-
-        const weekdayRow = document.createElement("div");
-        weekdayRow.className = "weekday-row";
-        weekdays.forEach((label) => {
-          const cell = document.createElement("div");
-          cell.textContent = label;
-          weekdayRow.appendChild(cell);
-        });
-        monthBox.appendChild(weekdayRow);
-
-        const daysGrid = document.createElement("div");
-        daysGrid.className = "days";
-
-        const firstDay = new Date(year, month, 1);
-        const startOffset = firstDay.getDay();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-        for (let i = 0; i < startOffset; i += 1) {
-          const empty = document.createElement("div");
-          empty.className = "day empty";
-          empty.textContent = "0";
-          daysGrid.appendChild(empty);
+      try {
+        const result = Function("return (" + fullExpression + ")")();
+        if (!Number.isFinite(result)) {
+          throw new Error("Invalid result");
         }
 
-        for (let day = 1; day <= daysInMonth; day += 1) {
-          const cell = document.createElement("div");
-          cell.className = "day";
-          cell.textContent = String(day);
-
-          const now = new Date();
-          if (
-            now.getFullYear() === year &&
-            now.getMonth() === month &&
-            now.getDate() === day
-          ) {
-            cell.classList.add("today");
-          }
-
-          daysGrid.appendChild(cell);
-        }
-
-        monthBox.appendChild(daysGrid);
-        calendarEl.appendChild(monthBox);
+        historyEl.textContent = fullExpression + " =";
+        current = String(Number(result.toFixed(12)));
+        expression = "";
+        shouldReset = true;
+        updateDisplay();
+      } catch {
+        current = "Error";
+        expression = "";
+        shouldReset = true;
+        updateDisplay();
       }
     }
 
-    updateClock();
-    buildCalendar(new Date().getFullYear());
-    setInterval(updateClock, 1000);
+    keys.addEventListener("click", (event) => {
+      const btn = event.target.closest("button");
+      if (!btn) return;
 
-    initTheme();
-    themeToggle.addEventListener("click", () => {
-      const isDark = document.documentElement.getAttribute("data-theme") === "dark";
-      const next = isDark ? "light" : "dark";
-      localStorage.setItem(storageKey, next);
-      applyTheme(next);
+      const { value, action } = btn.dataset;
+
+      if (action === "clear") return clearAll();
+      if (action === "delete") return deleteOne();
+      if (action === "equals") return calculate();
+
+      if (!value) return;
+      if (/^\d$/.test(value)) return appendNumber(value);
+      if (value === ".") return appendDot();
+      if (isOperator(value)) return setOperator(value);
     });
+
+    window.addEventListener("keydown", (event) => {
+      const { key } = event;
+
+      if (/^\d$/.test(key)) return appendNumber(key);
+      if (key === ".") return appendDot();
+      if (["+", "-", "*", "/", "%"].includes(key)) return setOperator(key);
+      if (key === "Enter" || key === "=") {
+        event.preventDefault();
+        return calculate();
+      }
+      if (key === "Backspace") return deleteOne();
+      if (key === "Escape") return clearAll();
+    });
+
+    updateDisplay();
   </script>
 </body>
 </html>
